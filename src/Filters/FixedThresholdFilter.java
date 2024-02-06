@@ -3,6 +3,8 @@ package Filters;
 import Interfaces.PixelFilter;
 import core.DImage;
 
+import java.util.ArrayList;
+
 public class FixedThresholdFilter implements PixelFilter {
 
     public FixedThresholdFilter() {
@@ -44,9 +46,24 @@ public class FixedThresholdFilter implements PixelFilter {
                 answerList.add("E");
             }
         }
-
+        print(answerList);
+        //LATER WE CAN PRINT THIS TO A CSV FILE INSTEAD OF PRINTING IT
         img.setPixels(grid);
         return img;
+    }
+    private static void print(ArrayList<String> arr){
+        for (int i = 0; i < arr.size(); i++) {
+            System.out.println(arr.get(i));
+        }
+    }
+    private static short[][] crop(short[][] img, int startR, int startC, int endR, int endC){
+        short[][] newImg = new short[endR-startR+1][endC-startC+1];
+        for (int r = 0; r <= endR-startR; r++) {
+            for (int c = 0; c <= endC-startC; c++) {
+                newImg[r][c] = img[r+startR][c+startC];
+            }
+        }
+        return newImg;
     }
 }
 
