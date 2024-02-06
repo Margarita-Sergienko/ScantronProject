@@ -4,23 +4,44 @@ import Interfaces.PixelFilter;
 import core.DImage;
 
 public class FixedThresholdFilter implements PixelFilter {
-    private int threshold;
 
     public FixedThresholdFilter() {
-        threshold = 127;
+
     }
 
     @Override
     public DImage processImage(DImage img) {
-        short[][] grid = img.getBWPixelGrid();
-
-        for (int r = 0; r < grid.length; r++) {
-            for (int c = 0; c < grid[r].length; c++) {
-                if (grid[r][c] > threshold) {
-                    grid[r][c] = 255;
-                } else {
-                    grid[r][c] = 0;
+        short[][] gridOld = img.getBWPixelGrid();
+        short[][] grid = crop(gridOld, 0, 0, 600, 600);
+        ArrayList<String> answerList = new ArrayList<>();
+        int ansCol = 0;
+        for (int r = 108; r < 226; r+=50) {
+            double minAvg = 255;
+            for (int c = 105; c < 231; c+=25){
+                //find the avg
+                double sum = 0;
+                for (int i = 0; i < 20; i++){
+                    for (int j = 0; j < 20; j++) {
+                        sum += grid[r + i][c + j];
+                    }
                 }
+                double avgBW = sum/400;
+                if(avgBW<minAvg){
+                    minAvg = avgBW;
+                    ansCol = c;
+                }
+            }
+
+            if(ansCol==105){
+                answerList.add("A");
+            }else if(ansCol == 130){
+                answerList.add("B");
+            }else if(ansCol == 155){
+                answerList.add("C");
+            }else if(ansCol == 180){
+                answerList.add("D");
+            }else{
+                answerList.add("E");
             }
         }
 
