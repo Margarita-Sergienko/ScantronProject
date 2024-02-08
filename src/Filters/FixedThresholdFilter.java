@@ -6,6 +6,9 @@ import core.DImage;
 import java.util.ArrayList;
 
 public class FixedThresholdFilter implements PixelFilter {
+    private int numAnswers;
+    private int ansCol;
+    private int ansRow;
 
     public FixedThresholdFilter() {
 
@@ -14,7 +17,8 @@ public class FixedThresholdFilter implements PixelFilter {
     @Override
     public DImage processImage(DImage img) {
         short[][] gridOld = img.getBWPixelGrid();
-        short[][] grid = crop(gridOld, 0, 0, 600, 600);
+        //short[][] grid = crop(gridOld, 0, 0, 600, 600);
+        short[][] grid = gridOld;
         ArrayList<String> answerList = new ArrayList<>();
 
         for (int col = 444; col <= 490; col+=23) {
@@ -30,15 +34,9 @@ public class FixedThresholdFilter implements PixelFilter {
         }
         for (int r = 108; r < numAnswers*50 + 108; r+=50) {
             double minAvg = 255;
-            for (int c = 105; c < 231; c+=25){
+            for (int c = 105; c <= 205; c+=25){
                 //find the avg
-                double sum = 0;
-                for (int i = 0; i < 20; i++){
-                    for (int j = 0; j < 20; j++) {
-                        sum += grid[r + i][c + j];
-                    }
-                }
-                double avgBW = sum/400;
+                double avgBW = getAverage(grid, r, c);
                 if(avgBW<minAvg){
                     minAvg = avgBW;
                     ansCol = c;
