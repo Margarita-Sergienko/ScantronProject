@@ -16,8 +16,19 @@ public class FixedThresholdFilter implements PixelFilter {
         short[][] gridOld = img.getBWPixelGrid();
         short[][] grid = crop(gridOld, 0, 0, 600, 600);
         ArrayList<String> answerList = new ArrayList<>();
-        int ansCol = 0;
-        for (int r = 108; r < 226; r+=50) {
+
+        for (int col = 444; col <= 490; col+=23) {
+            double minAvg = 255;
+            for (int row = 327; row <= 557; row += 23) {
+                double avgBW = getAverage(grid, row, col);
+                if(avgBW<minAvg) {
+                    minAvg = avgBW;
+                    ansRow = row;
+                }
+            }
+            numAnswers += getAnsNum(ansRow, col);
+        }
+        for (int r = 108; r < numAnswers*50 + 108; r+=50) {
             double minAvg = 255;
             for (int c = 105; c < 231; c+=25){
                 //find the avg
@@ -64,6 +75,26 @@ public class FixedThresholdFilter implements PixelFilter {
             }
         }
         return newImg;
+    }
+    public static double getAverage(short[][] grid, int r, int c){
+        double sum = 0;
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                sum += grid[r + i][c + j];
+            }
+        }
+        return sum/400;
+    }
+    public static int getAnsNum(int ansRow, int ansCol){
+        int multiple =0;
+        if(ansCol == 444){
+            multiple = 100;
+        }
+        else if(ansCol == 467){
+            multiple = 10;
+        }
+        else multiple = 1;
+        return ((ansRow-327)/23)*multiple;
     }
 }
 
