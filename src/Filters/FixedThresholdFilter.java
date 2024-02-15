@@ -6,32 +6,35 @@ import core.DImage;
 import java.util.ArrayList;
 
 public class FixedThresholdFilter implements PixelFilter {
-    private int numAnswers;
+    private static int numAnswers;
     private int ansCol;
     private int ansRow;
+    //private ArrayList<String> answerList;
+    private boolean newAnswers;
+    private DImage image;
+    private short[][] grid;
 
-    public FixedThresholdFilter() {
-
+    public FixedThresholdFilter(DImage img) {
+        image = img;
+        grid = image.getBWPixelGrid();
     }
+//    public FixedThresholdFilter(boolean na) {
+//        newAnswers = na;
+//    }
 
     @Override
     public DImage processImage(DImage img) {
-        short[][] gridOld = img.getBWPixelGrid();
-        //short[][] grid = crop(gridOld, 0, 0, 600, 600);
-        short[][] grid = gridOld;
-        ArrayList<String> answerList = new ArrayList<>();
 
-        for (int col = 444; col <= 490; col+=23) {
-            double minAvg = 255;
-            for (int row = 327; row <= 557; row += 23) {
-                double avgBW = getAverage(grid, row, col);
-                if(avgBW<minAvg) {
-                    minAvg = avgBW;
-                    ansRow = row;
-                }
-            }
-            numAnswers += getAnsNum(ansRow, col);
-        }
+        ArrayList<String> answerList = calculateAnswerList();
+
+
+        //print(answerList);
+        //LATER WE CAN PRINT THIS TO A CSV FILE INSTEAD OF PRINTING IT
+        return img;
+    }
+
+    public ArrayList<String> calculateAnswerList(){
+        ArrayList<String> answerList = new ArrayList<>();
         for (int r = 108; r < numAnswers*50 + 108; r+=50) {
             double minAvg = 255;
             for (int c = 105; c <= 205; c+=25){
@@ -55,15 +58,27 @@ public class FixedThresholdFilter implements PixelFilter {
                 answerList.add("E");
             }
         }
-        print(answerList);
-        //LATER WE CAN PRINT THIS TO A CSV FILE INSTEAD OF PRINTING IT
-        img.setPixels(grid);
-        return img;
+        return answerList;
     }
     private static void print(ArrayList<String> arr){
         for (int i = 0; i < arr.size(); i++) {
             System.out.println(arr.get(i));
         }
+    }
+    public int getNumAnswers(){
+        numAnswers = 0;
+        for (int col = 444; col <= 490; col += 23) {
+            double minAvg = 255;
+            for (int row = 327; row <= 557; row += 23) {
+                double avgBW = getAverage(grid, row, col);
+                if (avgBW < minAvg) {
+                    minAvg = avgBW;
+                    ansRow = row;
+                }
+            }
+            numAnswers += getAnsNum(ansRow, col);
+        }
+        return numAnswers;
     }
     private static short[][] crop(short[][] img, int startR, int startC, int endR, int endC){
         short[][] newImg = new short[endR-startR+1][endC-startC+1];
@@ -84,7 +99,7 @@ public class FixedThresholdFilter implements PixelFilter {
         return sum/400;
     }
     public static int getAnsNum(int ansRow, int ansCol){
-        int multiple =0;
+        int multiple = 0;
         if(ansCol == 444){
             multiple = 100;
         }
