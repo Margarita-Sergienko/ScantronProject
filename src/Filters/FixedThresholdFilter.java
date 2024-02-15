@@ -109,5 +109,6 @@ public class FixedThresholdFilter implements PixelFilter {
         else multiple = 1;
         return ((ansRow-327)/23)*multiple;
     }
+
 }
 

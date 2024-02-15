@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class OpticalMarkReaderMain {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String pathToPdf = fileChooser();
         System.out.println("Loading pdf at " + pathToPdf);
 
@@ -52,6 +52,18 @@ public class OpticalMarkReaderMain {
             String data = readFile("gradedPapersReport.csv");
             System.out.println("Our gradedPapers file contains: " + data);
         }
+        int count;
+        for (int i = 0; i < numAnswer; i++) {
+            count = 0;
+            for (int j = 0; j < 6; j++) {
+                int currIndex = i+(12*j);
+                if(gradedAns.get(currIndex).equals("right")){
+                    count++;
+                }
+            }
+            writeDataToFile("eachQuestionReport.csv", "Question "+ (i+1) + ": " + count + "/6\n");
+        }
+
 
 
 
@@ -92,4 +104,23 @@ public class OpticalMarkReaderMain {
         // that does the image processing an returns a DTO with
         // the information you want
     }
+
+    public static void writeDataToFile(String filePath, String data) throws IOException {
+        try (FileWriter f = new FileWriter(filePath, true);
+             BufferedWriter b = new BufferedWriter(f);
+             PrintWriter writer = new PrintWriter(b);) {
+
+
+            writer.print(data);
+
+
+        } catch (IOException error) {
+            System.err.println("There was a problem writing to the file: " + filePath);
+            error.printStackTrace();
+        }
+    }
+    public static String readFile(String fileName) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(fileName)));
+    }
+
 }
