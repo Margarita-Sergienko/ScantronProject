@@ -1,0 +1,8 @@
+Page #, # correct, q1, q2, q3, q4 ...
+
+1, 12, right, right, right, right, right, right, right, right, right, right, right, right
+2, 12, right, right, right, right, right, right, right, right, right, right, right, right
+3, 9, right, right, right, wrong, wrong, right, right, right, right, right, right, wrong
+4, 9, right, right, right, right, wrong, right, right, right, right, right, wrong, wrong
+5, 9, right, right, wrong, right, wrong, right, right, right, right, right, right, wrong
+6, 8, right, right, wrong, wrong, right, right, right, right, right, wrong, right, wrong
